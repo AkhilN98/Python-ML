@@ -1,0 +1,302 @@
+---
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.2'
+      jupytext_version: 1.4.2
+  kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
+
+# 911 Calls Capstone Project
+
+
+For this capstone project we will be analyzing some 911 call data from [Kaggle](https://www.kaggle.com/mchirico/montcoalert). The data contains the following fields:
+
+* lat : String variable, Latitude
+* lng: String variable, Longitude
+* desc: String variable, Description of the Emergency Call
+* zip: String variable, Zipcode
+* title: String variable, Title
+* timeStamp: String variable, YYYY-MM-DD HH:MM:SS
+* twp: String variable, Township
+* addr: String variable, Address
+* e: String variable, Dummy variable (always 1)
+
+Just go along with this notebook and try to complete the instructions or answer the questions in bold using your Python and Data Science skills!
+
+
+## Data and Setup
+
+
+____
+** Import numpy and pandas **
+
+```{python}
+import numpy as np
+import pandas as pd
+```
+
+** Import visualization libraries and set %matplotlib inline. **
+
+```{python jupyter={'outputs_hidden': False}}
+import seaborn as sns
+import matplotlib.pyplot as plt
+from plotly import __version__
+from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
+
+# %matplotlib inline
+sns.set_style('whitegrid')
+```
+
+** Read in the csv file as a dataframe called df **
+
+```{python}
+df = pd.read_csv('911.csv')
+```
+
+** Check the info() of the df **
+
+```{python}
+df.info()
+```
+
+```{python jupyter={'outputs_hidden': False}}
+
+```
+
+** Check the head of df **
+
+```{python}
+df.head()
+```
+
+```{python jupyter={'outputs_hidden': False}}
+
+```
+
+## Basic Questions
+
+
+** What are the top 5 zipcodes for 911 calls? **
+
+```{python}
+df['zip'].value_counts().head(5)
+```
+
+```{python jupyter={'outputs_hidden': False}}
+
+```
+
+** What are the top 5 townships (twp) for 911 calls? **
+
+```{python}
+df['twp'].value_counts().head(5)
+```
+
+```{python jupyter={'outputs_hidden': False}}
+
+```
+
+** Take a look at the 'title' column, how many unique title codes are there? **
+
+```{python}
+len(df['title'].unique())
+```
+
+## Creating new features
+
+
+** In the titles column there are "Reasons/Departments" specified before the title code. These are EMS, Fire, and Traffic. Use .apply() with a custom lambda expression to create a new column called "Reason" that contains this string value.** 
+
+**For example, if the title column value is EMS: BACK PAINS/INJURY , the Reason column value would be EMS. **
+
+```{python}
+df['Reason'] = df['title'].apply(lambda x: x.split(':')[0])
+```
+
+```{python}
+df.head()
+```
+
+** What is the most common Reason for a 911 call based off of this new column? **
+
+```{python}
+df['Reason'].value_counts()
+```
+
+** Now use seaborn to create a countplot of 911 calls by Reason. **
+
+```{python}
+sns.countplot(data = df, x = 'Reason')
+```
+
+___
+** Now let us begin to focus on time information. What is the data type of the objects in the timeStamp column? **
+
+```{python jupyter={'outputs_hidden': False}}
+df['timeStamp'].dtypes
+```
+
+** You should have seen that these timestamps are still strings. Use [pd.to_datetime](http://pandas.pydata.org/pandas-docs/stable/generated/pandas.to_datetime.html) to convert the column from strings to DateTime objects. **
+
+```{python}
+df['timeStamp'] = pd.to_datetime(df['timeStamp'])
+```
+
+```{python}
+df.dtypes
+```
+
+```{python}
+time = df['timeStamp'].iloc[1700]
+time.dayofweek
+```
+
+** You can now grab specific attributes from a Datetime object by calling them. For example:**
+
+    time = df['timeStamp'].iloc[0]
+    time.hour
+
+**You can use Jupyter's tab method to explore the various attributes you can call. Now that the timestamp column are actually DateTime objects, use .apply() to create 3 new columns called Hour, Month, and Day of Week. You will create these columns based off of the timeStamp column, reference the solutions if you get stuck on this step.**
+
+```{python}
+df['Hour'] = df['timeStamp'].apply(lambda x: x.hour)
+```
+
+```{python}
+df['Month']= df['timeStamp'].apply(lambda x: x.month)
+```
+
+```{python}
+df['DayOfWeek']= df['timeStamp'].apply(lambda x: x.dayofweek)
+df['DayOfWeek'].unique()
+```
+
+** Notice how the Day of Week is an integer 0-6. Use the .map() with this dictionary to map the actual string names to the day of the week: **
+
+    dmap = {0:'Mon',1:'Tue',2:'Wed',3:'Thu',4:'Fri',5:'Sat',6:'Sun'}
+
+```{python jupyter={'outputs_hidden': False}}
+dmap = {0:'Mon',1:'Tue',2:'Wed',3:'Thu',4:'Fri',5:'Sat',6:'Sun'}
+df['DayOfWeek'] = df['DayOfWeek'].map({0:'Mon',1:'Tue',2:'Wed',3:'Thu',4:'Fri',5:'Sat',6:'Sun'})
+```
+
+```{python jupyter={'outputs_hidden': False}}
+df['DayOfWeek'].unique()
+```
+
+** Now use seaborn to create a countplot of the Day of Week column with the hue based off of the Reason column. **
+
+```{python}
+g = sns.countplot(data = df, x = 'DayOfWeek', hue = 'Reason')
+g.legend(loc='best', bbox_to_anchor=(1.25, 0.5), ncol=1)
+```
+
+**Now do the same for Month:**
+
+```{python}
+g = sns.countplot(data = df, x = 'Month', hue = 'Reason')
+g.legend(loc='best', bbox_to_anchor=(1.25, 0.5), ncol=1)
+```
+
+**Did you notice something strange about the Plot?**
+
+_____
+
+** You should have noticed it was missing some Months, let's see if we can maybe fill in this information by plotting the information in another way, possibly a simple line plot that fills in the missing months, in order to do this, we'll need to do some work with pandas... **
+
+
+** Now create a gropuby object called byMonth, where you group the DataFrame by the month column and use the count() method for aggregation. Use the head() method on this returned DataFrame. **
+
+```{python}
+byMonth = df.groupby('Month').count()
+byMonth.head()
+```
+
+** Now create a simple plot off of the dataframe indicating the count of calls per month. **
+
+```{python}
+byMonth['lat'].plot()
+```
+
+** Now see if you can use seaborn's lmplot() to create a linear fit on the number of calls per month. Keep in mind you may need to reset the index to a column. **
+
+```{python}
+sns.lmplot(data = byMonth.reset_index(), x = 'Month', y = 'twp')
+```
+
+**Create a new column called 'Date' that contains the date from the timeStamp column. You'll need to use apply along with the .date() method. ** 
+
+```{python}
+df['Date'] = df['timeStamp'].apply(lambda x: x.date())
+```
+
+** Now groupby this Date column with the count() aggregate and create a plot of counts of 911 calls.**
+
+```{python}
+byDate = df.groupby('Date').count()['lat'].plot()
+plt.tight_layout()
+```
+
+** Now recreate this plot but create 3 separate plots with each plot representing a Reason for the 911 call**
+
+```{python}
+df[df['Reason'] == 'Traffic'].groupby('Date').count()['lat'].plot()
+plt.tight_layout()
+```
+
+```{python jupyter={'outputs_hidden': False}}
+df[df['Reason'] == 'Fire'].groupby('Date').count()['lat'].plot()
+plt.tight_layout()
+```
+
+```{python jupyter={'outputs_hidden': False}}
+df[df['Reason'] == 'EMS'].groupby('Date').count()['lat'].plot()
+plt.tight_layout()
+```
+
+____
+** Now let's move on to creating  heatmaps with seaborn and our data. We'll first need to restructure the dataframe so that the columns become the Hours and the Index becomes the Day of the Week. There are lots of ways to do this, but I would recommend trying to combine groupby with an [unstack](http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.unstack.html) method. Reference the solutions if you get stuck on this!**
+
+```{python jupyter={'outputs_hidden': False}}
+daydf = df.groupby(by = ['DayOfWeek', 'Hour']).count()['Reason'].unstack()
+daydf
+```
+
+** Now create a HeatMap using this new DataFrame. **
+
+```{python}
+plt.figure(figsize = (14,7))
+sns.heatmap(data = daydf, cmap = 'viridis')
+```
+
+** Now create a clustermap using this DataFrame. **
+
+```{python}
+plt.figure(figsize = (14,7))
+sns.clustermap(data = daydf, cmap = 'viridis')
+```
+
+** Now repeat these same plots and operations, for a DataFrame that shows the Month as the column. **
+
+```{python}
+monthdf = df.groupby(by = ['DayOfWeek', 'Month']).count()['Reason'].unstack()
+```
+
+```{python}
+plt.figure(figsize = (14,7))
+sns.heatmap(data = monthdf, cmap = 'coolwarm')
+```
+
+```{python jupyter={'outputs_hidden': False}}
+plt.figure(figsize = (14,7))
+sns.clustermap(data = monthdf, cmap = 'coolwarm')
+```
+
+**Continue exploring the Data however you see fit!**
+# Great Job!

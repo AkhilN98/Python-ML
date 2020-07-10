@@ -1,0 +1,531 @@
+---
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.2'
+      jupytext_version: 1.4.2
+  kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
+
+___
+
+<a href='http://www.pieriandata.com'> <img src='../Pierian_Data_Logo.png' /></a>
+___
+# Python Crash Course
+
+Please note, this is not meant to be a comprehensive overview of Python or programming in general, if you have no programming experience, you should probably take my other course: [Complete Python Bootcamp](https://www.udemy.com/complete-python-bootcamp/?couponCode=PY20) instead.
+
+**This notebook is just a code reference for the videos, no written explanations here**
+
+This notebook will just go through the basic topics in order:
+
+* Data types
+    * Numbers
+    * Strings
+    * Printing
+    * Lists
+    * Dictionaries
+    * Booleans
+    * Tuples 
+    * Sets
+* Comparison Operators
+* if, elif, else Statements
+* for Loops
+* while Loops
+* range()
+* list comprehension
+* functions
+* lambda expressions
+* map and filter
+* methods
+____
+
+
+## Data types
+
+### Numbers
+
+```{python}
+1 + 1
+```
+
+```{python}
+1 * 3
+```
+
+```{python}
+1 / 2
+```
+
+```{python}
+2 ** 4
+```
+
+```{python}
+4 % 2
+```
+
+```{python}
+5 % 2
+```
+
+```{python}
+(2 + 3) * (5 + 5)
+```
+
+### Variable Assignment
+
+```{python}
+# Can not start with number or special characters
+name_of_var = 2
+```
+
+```{python}
+x = 2
+y = 3
+```
+
+```{python}
+z = x + y
+```
+
+```{python}
+z
+```
+
+### Strings
+
+```{python}
+'single quotes'
+```
+
+```{python}
+"double quotes"
+```
+
+```{python}
+" wrap lot's of other quotes"
+```
+
+### Printing
+
+```{python}
+x = 'hello'
+```
+
+```{python}
+x
+```
+
+```{python}
+print(x)
+```
+
+```{python}
+num = 12
+name = 'Sam'
+```
+
+```{python}
+print('My number is: {one}, and my name is: {two}'.format(one=num,two=name))
+```
+
+```{python}
+print('My number is: {}, and my name is: {}'.format(num,name))
+```
+
+### Lists
+
+```{python}
+[1,2,3]
+```
+
+```{python}
+['hi',1,[1,2]]
+```
+
+```{python}
+my_list = ['a','b','c']
+```
+
+```{python}
+my_list.append('d')
+```
+
+```{python}
+my_list
+```
+
+```{python}
+my_list[0]
+```
+
+```{python}
+my_list[1]
+```
+
+```{python}
+my_list[1:]
+```
+
+```{python}
+my_list[:1]
+```
+
+```{python}
+my_list[0] = 'NEW'
+```
+
+```{python}
+my_list
+```
+
+```{python}
+nest = [1,2,3,[4,5,['target']]]
+```
+
+```{python}
+nest[3]
+```
+
+```{python}
+nest[3][2]
+```
+
+```{python}
+nest[3][2][0]
+```
+
+### Dictionaries
+
+```{python}
+d = {'key1':'item1','key2':'item2'}
+```
+
+```{python}
+d
+```
+
+```{python}
+d['key1']
+```
+
+### Booleans
+
+```{python}
+True
+```
+
+```{python}
+False
+```
+
+### Tuples 
+
+```{python}
+t = (1,2,3)
+```
+
+```{python}
+t[0]
+```
+
+```{python}
+t[0] = 'NEW'
+```
+
+### Sets
+
+```{python}
+{1,2,3}
+```
+
+```{python}
+{1,2,3,1,2,1,2,3,3,3,3,2,2,2,1,1,2}
+```
+
+## Comparison Operators
+
+```{python}
+1 > 2
+```
+
+```{python}
+1 < 2
+```
+
+```{python}
+1 >= 1
+```
+
+```{python}
+1 <= 4
+```
+
+```{python}
+1 == 1
+```
+
+```{python}
+'hi' == 'bye'
+```
+
+## Logic Operators
+
+```{python}
+(1 > 2) and (2 < 3)
+```
+
+```{python}
+(1 > 2) or (2 < 3)
+```
+
+```{python}
+(1 == 2) or (2 == 3) or (4 == 4)
+```
+
+## if,elif, else Statements
+
+```{python}
+if 1 < 2:
+    print('Yep!')
+```
+
+```{python}
+if 1 < 2:
+    print('yep!')
+```
+
+```{python}
+if 1 < 2:
+    print('first')
+else:
+    print('last')
+```
+
+```{python}
+if 1 > 2:
+    print('first')
+else:
+    print('last')
+```
+
+```{python}
+if 1 == 2:
+    print('first')
+elif 3 == 3:
+    print('middle')
+else:
+    print('Last')
+```
+
+## for Loops
+
+```{python}
+seq = [1,2,3,4,5]
+```
+
+```{python}
+for item in seq:
+    print(item)
+```
+
+```{python}
+for item in seq:
+    print('Yep')
+```
+
+```{python}
+for jelly in seq:
+    print(jelly+jelly)
+```
+
+## while Loops
+
+```{python}
+i = 1
+while i < 5:
+    print('i is: {}'.format(i))
+    i = i+1
+```
+
+## range()
+
+```{python}
+range(5)
+```
+
+```{python}
+for i in range(5):
+    print(i)
+```
+
+```{python}
+list(range(5))
+```
+
+## list comprehension
+
+```{python}
+x = [1,2,3,4]
+```
+
+```{python}
+out = []
+for item in x:
+    out.append(item**2)
+print(out)
+```
+
+```{python}
+[item**2 for item in x]
+```
+
+## functions
+
+```{python}
+def my_func(param1='default'):
+    """
+    Docstring goes here.
+    """
+    print(param1)
+```
+
+```{python}
+my_func
+```
+
+```{python}
+my_func()
+```
+
+```{python}
+my_func('new param')
+```
+
+```{python}
+my_func(param1='new param')
+```
+
+```{python}
+def square(x):
+    return x**2
+```
+
+```{python}
+out = square(2)
+```
+
+```{python}
+print(out)
+```
+
+## lambda expressions
+
+```{python}
+def times2(var):
+    return var*2
+```
+
+```{python}
+times2(2)
+```
+
+```{python}
+lambda var: var*2
+```
+
+## map and filter
+
+```{python}
+seq = [1,2,3,4,5]
+```
+
+```{python}
+map(times2,seq)
+```
+
+```{python}
+list(map(times2,seq))
+```
+
+```{python}
+list(map(lambda var: var*2,seq))
+```
+
+```{python}
+filter(lambda item: item%2 == 0,seq)
+```
+
+```{python}
+list(filter(lambda item: item%2 == 0,seq))
+```
+
+## methods
+
+```{python}
+st = 'hello my name is Sam'
+```
+
+```{python}
+st.lower()
+```
+
+```{python}
+st.upper()
+```
+
+```{python}
+st.split()
+```
+
+```{python}
+tweet = 'Go Sports! #Sports'
+```
+
+```{python}
+tweet.split('#')
+```
+
+```{python}
+tweet.split('#')[1]
+```
+
+```{python}
+d
+```
+
+```{python}
+d.keys()
+```
+
+```{python}
+d.items()
+```
+
+```{python}
+lst = [1,2,3]
+```
+
+```{python}
+lst.pop()
+```
+
+```{python}
+lst
+```
+
+```{python}
+'x' in [1,2,3]
+```
+
+```{python}
+'x' in ['x','y','z']
+```
+
+# Great Job!
